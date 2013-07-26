@@ -303,9 +303,14 @@ class BaseFilterSet(object):
                 else:
                     choices = [(f, capfirst(f)) for f in self._meta.order_by]
             else:
+                # add asc and desc field names
                 # use the filter's label if provided
-                choices = [(fltr.name or f, fltr.label or capfirst(f))
-                           for f, fltr in self.filters.items()]
+                choices = []
+                for f, fltr in self.filters.items():
+                    choices.extend([
+                        (fltr.name or f, fltr.label or capfirst(f)),
+                        ("-%s" % (fltr.name or f), '%s (descending)' % (fltr.label or capfirst(f)))
+                    ])
             return forms.ChoiceField(label="Ordering", required=False,
                                      choices=choices)
 
